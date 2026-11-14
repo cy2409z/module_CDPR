@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f7fa">
+    <meta name="color-scheme" content="light dark">
+    <title>晨夕敛光 - 骁龙8Gen5限频</title>
+    <script>
+        // 在样式加载前恢复主题选择，避免深色模式闪白。
+        try {
+            var savedTheme = localStorage.getItem("chenxi.theme");
+            if (savedTheme === "light" || savedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", savedTheme);
+            }
+            // 截图 / 低性能预览可使用 ?static=1 关闭动效。
+            if (new URLSearchParams(window.location.search).has("static")) {
+                document.documentElement.classList.add("no-motion");
+            }
+        } catch (error) { /* 本地存储不可用时忽略 */ }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <!-- ==================== 全局固定标题栏 ==================== -->
+    <header class="topbar" role="banner">
+        <div class="topbar-inner">
+            <h1 class="topbar-title">晨夕敛光 - 骁龙8Gen5限频</h1>
+            <p class="topbar-version">版本：<strong>C1.3.1</strong></p>
+        </div>
+    </header>
+
+    <div class="app-shell">
+        <main class="content" id="main">
+            <!-- ==================== 主页 ==================== -->
+            <section class="page is-active" id="page-home" aria-label="主页">
+                <!-- 运行状态 -->
+                <div class="status-grid reveal" style="--reveal-i: 0">
+                    <article class="status-card service-card" id="serviceCard" aria-label="服务运行中，PID 3360">
+                        <div class="status-card-head">
+                            <span class="live-dot" aria-hidden="true"></span>
+                            <span class="status-card-title" id="serviceStatusTitle">当前是静态页面，若看到此句则WebUI未正常加载</span>
+                        </div>
+                        <div class="pid-line">
+                            <span class="pid-label">PID</span>
+                            <span class="pid-value" id="pidValue">3360</span>
+                        </div>
+                        <div class="status-card-foot">
+                            <span class="foot-note">🥰</span>
+                        </div>
+                    </article>
+
+                    <article class="status-card games-card" aria-label="已添加游戏列表，共 153 项">
+                        <div class="status-card-head">
+                            <span class="list-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M8 6h13M8 12h13M8 18h13"/>
+                                    <circle cx="3.6" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+                                    <circle cx="3.6" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                                    <circle cx="3.6" cy="18" r="1.2" fill="currentColor" stroke="none"/>
+                                </svg>
+                            </span>
+                            <span class="status-card-title">已添加游戏列表</span>
+                        </div>
+                        <div class="game-count">
+                            <span id="gameCount" data-count="153">153</span><span class="game-count-unit">项</span>
+                        </div>
+                        <div class="status-card-foot">
+                            <span class="foot-note">解除限频的应用</span>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- 当前模式：位于 CPU 卡片上方 -->
+                <section class="mode-banner reveal" id="modeBanner" data-mode="daily" style="--reveal-i: 1" aria-label="当前模式：日常模式">
+                    <div class="mode-icon" aria-hidden="true">
+                        <svg class="mode-icon-daily" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4.5 19.5c0-8.5 5.3-14 15-15 .2 9.7-5.2 15-14 15Z"/>
+                            <path d="M4.8 19.2c3.2-5.1 7.1-8.3 11.8-10.6"/>
+                        </svg>
+                        <svg class="mode-icon-game" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7.2 8h9.6a4 4 0 0 1 3.9 3.1l.8 4a2.8 2.8 0 0 1-4.8 2.5L15.5 16h-7l-1.2 1.6a2.8 2.8 0 0 1-4.8-2.5l.8-4A4 4 0 0 1 7.2 8Z"/>
+                            <path d="M8 11.5v3M6.5 13h3"/>
+                            <circle cx="16" cy="12" r="1" fill="currentColor" stroke="none"/>
+                            <circle cx="18" cy="14" r="1" fill="currentColor" stroke="none"/>
+                        </svg>
+                        <svg class="mode-icon-error" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3.5 21 20H3L12 3.5Z"/>
+                            <path d="M12 9.5v4.5"/>
+                            <circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="mode-copy">
+                        <span class="mode-eyebrow">当前模式</span>
+                        <strong class="mode-name" id="modeName">日常模式</strong>
+                        <span class="mode-desc" id="modeDesc">限频生效</span>
+                    </div>
+                    <span class="mode-badge" id="modeBadge">
+                        <span class="mode-badge-dot" aria-hidden="true"></span>
+                        <span id="modeBadgeText">当前是静态页面，若看到此句则WebUI未正常加载</span>
+                    </span>
+                </section>
+
+                <!-- CPU -->
+                <section class="panel cpu-panel reveal" style="--reveal-i: 2" aria-labelledby="cpuTitle">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            <span class="panel-kicker">CPU</span>
+                            
+                        </div>
+                        <span class="legend-chip">当前 / 最大</span>
+                    </header>
+
+                    <div class="gauge-row">
+                        <article class="gauge-item">
+                            <div class="gauge">
+                                <svg class="gauge-svg" viewBox="0 0 120 120" role="img" aria-labelledby="midGaugeLabel">
+                                    <title id="midGaugeLabel">中核占用 35%</title>
+                                    <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+                                    <circle class="gauge-fill" id="midRing" cx="60" cy="60" r="52"></circle>
+                                </svg>
+                                <div class="gauge-center">
+                                    <span class="gauge-value" id="midPercent" data-count="35">35</span><span class="gauge-unit">%</span>
+                                </div>
+                            </div>
+                            <h3 class="gauge-label">中核</h3>
+                            <p class="freq-line" id="midFreq" aria-label="当前频率 1.42 GHz，最大频率 10.00 GHz">
+                                <span class="freq-cur">1.42</span>
+                                <span class="freq-sep">/</span>
+                                <span class="freq-max">2.02</span>
+                                <span class="freq-unit">GHz</span>
+                            </p>
+                        </article>
+
+                        <article class="gauge-item">
+                            <div class="gauge">
+                                <svg class="gauge-svg" viewBox="0 0 120 120" role="img" aria-labelledby="bigGaugeLabel">
+                                    <title id="bigGaugeLabel">大核占用 52%</title>
+                                    <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+                                    <circle class="gauge-fill" id="bigRing" cx="60" cy="60" r="52"></circle>
+                                </svg>
+                                <div class="gauge-center">
+                                    <span class="gauge-value" id="bigPercent" data-count="52">52</span><span class="gauge-unit">%</span>
+                                </div>
+                            </div>
+                            <h3 class="gauge-label">大核</h3>
+                            <p class="freq-line" id="bigFreq" aria-label="当前频率 2.42 GHz，最大频率 10.00 GHz">
+                                <span class="freq-cur">2.42</span>
+                                <span class="freq-sep">/</span>
+                                <span class="freq-max">3.20</span>
+                                <span class="freq-unit">GHz</span>
+                            </p>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- GPU -->
+                <section class="panel gpu-panel reveal" style="--reveal-i: 3" aria-labelledby="gpuTitle">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            <span class="panel-kicker">GPU</span>
+                            
+                        </div>
+                        <span class="legend-chip">当前 / 最大</span>
+                    </header>
+
+                    <div class="gauge-row single">
+                        <article class="gauge-item">
+                            <div class="gauge">
+                                <svg class="gauge-svg" viewBox="0 0 120 120" role="img" aria-labelledby="gpuGaugeLabel">
+                                    <title id="gpuGaugeLabel">GPU 占用 34%</title>
+                                    <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+                                    <circle class="gauge-fill" id="gpuRing" cx="60" cy="60" r="52"></circle>
+                                </svg>
+                                <div class="gauge-center">
+                                    <span class="gauge-value" id="gpuPercent" data-count="34">34</span><span class="gauge-unit">%</span>
+                                </div>
+                            </div>
+                            <h3 class="gauge-label">GPU</h3>
+                            <p class="freq-line" id="gpuFreq" aria-label="当前频率 680 MHz，最大频率 1000 MHz">
+                                <span class="freq-cur">680</span>
+                                <span class="freq-sep">/</span>
+                                <span class="freq-max">1000</span>
+                                <span class="freq-unit">MHz</span>
+                            </p>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- 刷新 -->
+                <div class="actions reveal" style="--reveal-i: 4">
+                    <button class="btn btn-primary refresh-btn" id="refreshBtn" type="button">
+                        <span class="btn-icon-wrap" aria-hidden="true">
+                            <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 11a8 8 0 0 0-14.6-4.6L3 9"/>
+                                <path d="M3 4v5h5"/>
+                                <path d="M4 13a8 8 0 0 0 14.6 4.6L21 15"/>
+                                <path d="M21 20v-5h-5"/>
+                            </svg>
+                        </span>
+                        <span class="btn-label" id="refreshLabel">刷新数据</span>
+                    </button>
+                    <p class="update-line">
+                        <span class="update-dot" aria-hidden="true"></span>
+                        <span id="lastUpdate">等待首次更新</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- ==================== 设置 ==================== -->
+            <section class="page" id="page-settings" aria-label="设置">
+                <header class="page-head">
+                    <h2>设置</h2>
+                </header>
+
+                <section class="panel">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            
+                            <h3>主题模式</h3>
+                        </div>
+                    </header>
+                    <div class="segmented" id="themeSegment" role="group" aria-label="主题模式">
+                        <button type="button" data-theme-choice="auto" class="is-active">跟随系统</button>
+                        <button type="button" data-theme-choice="light">浅色</button>
+                        <button type="button" data-theme-choice="dark">深色</button>
+                    </div>
+                   
+                </section>
+
+                <section class="panel">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            
+                            <h3>反馈方式</h3>
+                        </div>
+                    </header>
+                    <div class="setting-row">
+                        <div class="row-copy">
+                            <strong>振动提示</strong>
+                            <span>模式切换时提供触感反馈</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="vibrateToggle" checked>
+                            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                            <span class="sr-only">振动提示</span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="row-copy">
+                            <strong>信息提示</strong>
+                            <span>模式切换后显示简短提示</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="messageToggle" checked>
+                            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                            <span class="sr-only">信息提示</span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            
+                            <h3>日志与清理</h3>
+                        </div>
+                    </header>
+                    <div class="setting-row">
+                        <div class="row-copy">
+                            <strong>写入日志</strong>
+                            <span>记录限频策略的切换与异常</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="logToggle" checked>
+                            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                            <span class="sr-only">写入日志</span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="row-copy">
+                            <strong>自动清理</strong>
+                            <span>日志超过阈值时自动截断</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="autoCleanToggle" checked>
+                            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                            <span class="sr-only">自动清理日志</span>
+                        </label>
+                    </div>
+                    <div class="field-row" id="cleanSizeRow">
+                        <label for="cleanSize">清理阈值</label>
+                        <div class="input-suffix">
+                            <input type="number" id="cleanSize" value="1024" min="0" inputmode="numeric">
+                            <span>B</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <header class="panel-head">
+                        <div class="panel-title">
+                            
+                            <h3>列表与配置</h3>
+                        </div>
+                    </header>
+                    <button class="row-link" type="button" data-action="packages">
+                        <span class="row-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3.5" y="3.5" width="7" height="7" rx="2"/>
+                                <rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
+                                <rect x="3.5" y="13.5" width="7" height="7" rx="2"/>
+                                <rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
+                            </svg>
+                        </span>
+                        <span class="row-copy"><strong>包名列表</strong><span>管理纳入限频的应用</span></span>
+                        <span class="row-value" id="settingsGameCount">153</span>
+                        <span class="chevron" aria-hidden="true">›</span>
+                    </button>
+                    
+                </section>
+
+                <button class="btn btn-secondary save-btn" id="saveSettings" type="button">保存设置</button>
+                <p class="hint">设置将写入模块配置文件 config.conf</p>
+            </section>
+
+            <!-- ==================== 包名列表（子页面） ==================== -->
+            <section class="page page-sub" id="page-packages" aria-label="包名列表">
+                <header class="sub-head">
+                    <button class="sub-back" id="pkgBackBtn" type="button" aria-label="返回设置">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 5l-7 7 7 7"/>
+                        </svg>
+                    </button>
+                    <h2>包名列表</h2>
+                </header>
+
+                <section class="panel pkg-panel reveal" style="--reveal-i: 0" aria-labelledby="pkgTitle">
+                    <header class="pkg-head">
+                        <h3 class="pkg-title" id="pkgTitle">游戏包名列表</h3>
+                        <p class="pkg-desc">每行一个包名，# 开头为注释。前台（含分屏 / 小窗）命中列表即解除限频。</p>
+                    </header>
+
+                    <div class="pkg-count-row">
+                        <span class="pkg-count-label">已收录游戏</span>
+                        <span class="pkg-count-value"><span id="pkgCount">153</span> 款</span>
+                    </div>
+
+                    <div class="pkg-section">
+                        <label class="pkg-label" for="pkgQuickInput">快速添加</label>
+                        <div class="pkg-quick">
+                            <input type="text" id="pkgQuickInput" placeholder="com.xxx.game"
+                                autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url">
+                            <button class="btn btn-secondary pkg-add-btn" id="pkgAddBtn" type="button">添加</button>
+                        </div>
+                    </div>
+
+                    <div class="pkg-section">
+                        <label class="pkg-label" for="pkgEditor">列表编辑</label>
+                        <textarea class="pkg-editor" id="pkgEditor" rows="10"
+                            spellcheck="false" autocapitalize="off" autocomplete="off"
+                            aria-describedby="pkgDescText"></textarea>
+                        <span class="sr-only" id="pkgDescText">每行一个包名，井号开头为注释，保存后守护进程自动重载</span>
+                    </div>
+
+                    <div class="pkg-actions">
+                        <button class="btn btn-primary" id="pkgSaveBtn" type="button">
+                            <span class="btn-label">保存</span>
+                        </button>
+                        <button class="btn btn-secondary" id="pkgReloadBtn" type="button">
+                            <span class="btn-label">重新加载</span>
+                        </button>
+                    </div>
+                </section>
+            </section>
+
+            <!-- ==================== 关于 ==================== -->
+            <section class="page" id="page-about" aria-label="关于">
+                <div class="about-hero">
+                    <img class="author-avatar author-avatar-lg" src="icon.png" alt="" aria-hidden="true">
+                    <div class="about-title">
+                        <h2>晨阳</h2>
+                        <p>小步提交，慢慢重构，稳稳上线</p>
+                    </div>
+                    <span class="author-chip">作者</span>
+                </div>
+
+                <section class="panel">
+                    <div class="info-row"><span>模块版本</span><strong>C1.3.1</strong></div>
+                    <div class="info-row"><span>适配平台</span><strong>Snapdragon 8 Gen 5</strong></div>
+                    <div class="info-row"><span>构建时间</span><strong>2026-11-14 23:45</strong></div>
+                    <div class="info-row"><span>交流群</span><strong>915245823</strong></div>
+                </section>
+
+                <section class="panel about-note">
+                    <p>日用时限制频率避免爆发带来的高功耗，游戏时解除限制放给系统调度</p>
+                </section>
+
+                <p class="about-foot">晨夕敛光 · C1.3.1</p>
+            </section>
+        </main>
+
+        <!-- ==================== 底部导航 ==================== -->
+        <nav class="tabbar" aria-label="主导航">
+            <div class="tabbar-inner">
+                <button class="tab is-active" type="button" data-page="home" aria-current="page">
+                    <span class="tab-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 10.5 12 3l9 7.5"/>
+                            <path d="M5 9.5V21h14V9.5"/>
+                            <path d="M9.5 21v-6h5v6"/>
+                        </svg>
+                    </span>
+                    <span class="tab-label">主页</span>
+                </button>
+                <button class="tab" type="button" data-page="settings">
+                    <span class="tab-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 7h9M17.5 7H20M4 17h2.5M11 17h9"/>
+                            <circle cx="15" cy="7" r="2.4"/>
+                            <circle cx="9" cy="17" r="2.4"/>
+                        </svg>
+                    </span>
+                    <span class="tab-label">设置</span>
+                </button>
+                <button class="tab" type="button" data-page="about">
+                    <span class="tab-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 10.5V17"/>
+                            <circle cx="12" cy="7.3" r=".9" fill="currentColor" stroke="none"/>
+                        </svg>
+                    </span>
+                    <span class="tab-label">关于</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
